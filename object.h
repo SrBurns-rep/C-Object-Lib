@@ -5,8 +5,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define PWORD sizeof(void*)
-
 /**
  * Object struct.
 */
