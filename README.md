@@ -7,7 +7,7 @@ Goals:
 
  [X] Core
  
- [ ] QOL macros and functions
+ [X] QOL macros
  
  [ ] Benchmark
  
