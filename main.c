@@ -4,8 +4,8 @@
 int main(void){
 
     size_t elementsSizeArray[] = {12, 5, 9, 13, 17, 21};
-    size_t elementsTypeSizeArray[] = {sizeof(short), sizeof(char), sizeof(double),
-                                      sizeof(short), sizeof(int), sizeof(double)};
+    size_t elementsTypeSizeArray[] = {SHORT_S, CHAR_S, DOUBLE_S,
+                                      SHORT_S, INT_S, DOUBLE_S};
     size_t elementCount = 6;
 
     //alloc object

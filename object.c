@@ -27,8 +27,10 @@ Object* obj_Alloc(size_t* sizes, size_t* type_sizes, size_t element_count){
 
     Object* obj = malloc(sizeof(Object)); // Allocates object pointer
 
-    size_t* auxS = malloc(element_count * sizeof(size_t)); // Allocates element size array
-    size_t* auxT = malloc(element_count * sizeof(size_t)); // Allocates element type size array
+    size_t arraux =  element_count * sizeof(size_t);
+
+    size_t* auxS = malloc(2 * arraux); // Allocates both arrays
+    size_t* auxT = (size_t*)(auxS + arraux); // moves to element type size array's position
 
     obj->size_vector = auxS;
     obj->type_size_vector = auxT;

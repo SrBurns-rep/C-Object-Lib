@@ -5,6 +5,15 @@
 #include <stdbool.h>
 #include <string.h>
 
+// QOL macros:
+#define CHAR_S      sizeof(char)  // char size
+#define SHORT_S     sizeof(short) // short...
+#define INT_S       sizeof(int)
+#define FLOAT_S     sizeof(float)
+#define DOUBLE_S    sizeof(double)
+#define LONG_S      sizeof(long)
+#define LONGLONG_S  sizeof(long long)
+
 /**
  * Object struct.
 */
