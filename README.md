@@ -9,7 +9,7 @@ Goals:
  
  [X] QOL macros
  
- [ ] Benchmark
+ [ ] Demos
  
  [ ] File I/O
  

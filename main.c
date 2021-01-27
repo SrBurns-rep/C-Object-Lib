@@ -3,6 +3,7 @@
 
 int main(void){
 
+    // This works like a class but without the ID
     size_t elementsSizeArray[] = {12, 5, 9, 13, 17, 21};
     size_t elementsTypeSizeArray[] = {SHORT_S, CHAR_S, DOUBLE_S,
                                       SHORT_S, INT_S, DOUBLE_S};
