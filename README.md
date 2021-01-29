@@ -5,7 +5,7 @@
 
 Goals:
 
- [X] Core - reestructured.
+ [X] Core - reconstructed.
  
  [X] QOL macros
  

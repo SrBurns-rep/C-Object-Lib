@@ -134,7 +134,7 @@ char* obj_GetID(Object* obj, char* idbuffer){
 }
 
 bool obj_IdCompare(Object* obj1, Object* obj2){
-    for(int i = 0; i < 32; i++){
+    for(int i = 0; i < 2 * sizeof(size_t); i++){
         if(obj1->id[i] != obj2->id[i]) return false;
     }
     return true;

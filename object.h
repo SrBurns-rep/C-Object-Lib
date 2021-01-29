@@ -34,7 +34,9 @@ typedef struct ObjectType{
 }Object;
 /**
  * Makes an id with object size in bytes, element count and it's own
- * address on memory
+ * address on memory, object size in bytes and the element count
+ * can work as a "class" to define object format, and the object
+ * address on memory can be used as an individual identifier.
 */
 void obj_IdMake(Object* obj);
 /**
@@ -81,7 +83,7 @@ void obj_SetID(Object* obj, char* id);
 char* obj_GetID(Object* obj, char* idbuffer);
 
 /**
- * Compares the ID of two objects, return true
+ * Compares the first two segments of two objects IDs, return true
  * if equal, false otherwise
 */
 bool obj_IdCompare(Object* obj1, Object* obj2);
