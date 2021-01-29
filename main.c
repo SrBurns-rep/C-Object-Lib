@@ -1,86 +1,42 @@
 #include <stdio.h>
 #include "object.h"
 
-int main(void){
+int main(int argc, char const *argv[])
+{
+    size_t size[] = {45, 3};
+    size_t type[] = {CHAR_S, INT_S};
 
-    // This works like a class but without the ID
-    size_t elementsSizeArray[] = {12, 5, 9, 13, 17, 21};
-    size_t elementsTypeSizeArray[] = {SHORT_S, CHAR_S, DOUBLE_S,
-                                      SHORT_S, INT_S, DOUBLE_S};
-    size_t elementCount = 6;
+    char* str = "Hello, I'm an object!";
+    int nums[] = {-15, 320, 40};
 
-    //alloc object
+    Object* testobj = obj_Alloc(size, type, 2);
 
-    Object* obj = obj_Alloc(elementsSizeArray, elementsTypeSizeArray, elementCount);
+    obj_Set(testobj, str, 0);
+    obj_Set(testobj, nums, 1);
+    char* id = testobj->id;
 
-    /*  Static allocation: 
-
-    Object obj = (Object){{0}, {0}, 0, 0, NULL};
-
-    size_t* auxS[elementCount] = {0};
-    size_t* auxT[elementCount] = {0};
-    obj->size_vector = auxS;
-    obj->type_size_vector = auxT;
-
-    obj_MapMembers(&obj, elementsSizeArray, elementsTypeSizeArray, elementCount);
-    */
-
-    printf("Number of elements in the object: %u\n", obj->element_count);
-    printf("Size in bytes of the object: %u\n", obj->byte_count);
-    printf("Size of the elements in the object: ");
-
-    for(int i = 0; i < elementCount; i++){
-        printf("%u", obj->size_vector[i]);
-
-        if(i < elementCount - 1){
-            printf(", ");
-        }else{
-            printf("\n");
-        }
+    printf("ID:");
+    for(int i = -1; i < 32; i += sizeof(void*)){
+        printf(" %X", *(size_t*)(id + i));
     }
+    printf("\n");
 
-    printf("Size of the types used in the object: ");
+    printf("Size in bytes: %lu\n", testobj->byte_count);
+    printf("String: %s\n", (char*)testobj->table[0].data);
+    printf("Int: %i\n", *(int*)(testobj->table[1].data + 2*sizeof(int)));
 
-    for(int i = 0; i < elementCount; i++){
-        printf("%u", obj->type_size_vector[i]);
+    char* str2 = "I like to collect elements OwO";
+    int nums2[] = {300, -300, 150};
+    int buffer[3] = {0};
 
-        if(i < elementCount - 1){
-            printf(", ");
-        }else{
-            printf("\n");
-        }
-    }
+    obj_Set(testobj, str2, 0);
+    obj_Set(testobj, nums2, 1);
 
-    printf("First element:\n");
+    printf("String: %s\n", (char*)testobj->table[0].data);
 
-    short sharr[] = { 13, -13, 0, 0, 4, 90, 350, -234, 7, 23, 19, 1};
+    obj_Get(testobj, buffer, 1);
 
-    obj_SetAtIndex(obj, sharr, 0);
-
-    for(int i = 0; i < 12; i++){
-        printf("%i", *(short*)(obj->data + 2*i));
-
-        if(i < 11){
-            printf(", ");
-        }else{
-            printf("\n");
-        }
-    }
-
-    char* str = "duck";
-
-    obj_SetAtIndex(obj, str, 1); // writes to object "data" buffer at index 1
-
-    char* rst = (char*) obj_GetFromIndex(obj, 1);
-
-    printf("Second element:\n");
-    printf("%s\n", rst);
-
-    if(obj->is_dynamic){
-        printf("Object is dynamic.\n");
-
-        obj_Free(obj);
-    }
+    printf("Int: %i\n", buffer[2]);
 
     return 0;
 }

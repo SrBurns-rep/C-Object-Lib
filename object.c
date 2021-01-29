@@ -1,130 +1,141 @@
 #include "object.h"
 
-int obj_MapMembers(Object* obj, size_t* sizes, size_t* type_sizes, size_t element_count){
-    int byteSizeAux = 0;
+void obj_IdMake(Object* obj){
 
-    obj->element_count = element_count;
+    size_t idmem = (size_t) &obj;
 
-    // calc object size in bytes
-    for(int i = 0; i < element_count; i++){
-
-        byteSizeAux += sizes[i] * type_sizes[i];
-
-        obj->size_vector[i] = sizes[i];
-        obj->type_size_vector[i] = type_sizes[i];
-    }
-
-    obj->byte_count = byteSizeAux;
-    obj->is_dynamic = false;
-
-    return byteSizeAux;
-
+    memcpy(obj->id, &obj->byte_count, sizeof(size_t));
+    memcpy(obj->id + sizeof(size_t), &obj->element_count, sizeof(size_t));
+    memcpy(obj->id + 2 * sizeof(size_t), &idmem, sizeof(size_t));
 }
 
-Object* obj_Alloc(size_t* sizes, size_t* type_sizes, size_t element_count){
+Object* obj_Alloc(size_t* sizearr, size_t* typearr, int element_count){
 
-    size_t sizeInBytes = 0;
+    if(element_count == 0) return NULL;
 
-    Object* obj = malloc(sizeof(Object)); // Allocates object pointer
+    size_t byteSize = 0;
+    size_t shift = 0;
 
-    size_t arraux =  element_count * sizeof(size_t);
+    Element* tableaux = malloc(element_count * sizeof(Element));
 
-    size_t* auxS = malloc(2 * arraux); // Allocates both arrays
-    size_t* auxT = (size_t*)(auxS + arraux); // moves to element type size array's position
+    for(int i = 0; i < element_count; i++){
+        tableaux[i].size = sizearr[i];
+        tableaux[i].type = typearr[i];
+        byteSize += sizearr[i] * typearr[i];
+    }
 
-    obj->size_vector = auxS;
-    obj->type_size_vector = auxT;
+    Object* obj = malloc(sizeof(Object));
+    void* dataux = calloc(byteSize, 1);
 
-    sizeInBytes = obj_MapMembers(obj, sizes, type_sizes, element_count); // Maps the object
+    for(int i = 0; i < element_count; i++){
+        if(i == 0){
+            tableaux[i].data = dataux;
+        }else{
+            shift += sizearr[i-1]*typearr[i-1];
 
-    void* dataAux = calloc(1, sizeInBytes); // Allocates data buffer and fill with 0s
+            tableaux[i].data = (void*)(dataux + shift);
+        }
+    }
 
-    obj->data = dataAux;
-    obj->is_dynamic = true;
+    obj->table = tableaux;
+    obj->byte_count = byteSize;
+    obj->element_count = element_count;
 
+    obj_IdMake(obj);
+    
     return obj;
 }
 
-int obj_Free(Object* obj){
-    if(obj->is_dynamic){ // Checks if it can be destroyed
+void* obj_Access(Object* obj, int index){
+    
+    if(index < 0 || index >= obj->element_count) return NULL;
 
-        // Passing to variables to ease the process
-
-        size_t* fauxS = obj->size_vector;
-        size_t* fauxT = obj->type_size_vector;
-
-        Object* fauxObj = obj;
-
-        free(fauxS);
-        free(fauxT);
-        free(fauxObj); 
-
-        return EXIT_SUCCESS;
-    }else{
-
-        return EXIT_FAILURE;
-    }
+    return obj->table[index].data;
 }
 
-int obj_SetAtIndex(Object* obj, void* src, size_t index){
+int obj_Set(Object* obj, void* src, int index){
+    if(index < 0 || index >= obj->element_count) return -1;
 
-    if(index >= obj->element_count) return EXIT_FAILURE; // Checks if index is higher than the number of elements
+    size_t size = obj->table[index].size;
+    size_t type = obj->table[index].type;
+    
+    if(size == 0 || type == 0) return -1;
 
-    // Calculating data shift:
+    memcpy(obj->table[index].data, src, size*type);
 
-    int shift = 0;
-
-    if(! index){ // If index is '0' there's no shift 
-
-        size_t size = obj->size_vector[0];
-        size_t type = obj->type_size_vector[0];
-
-        memcpy(obj->data, src, size * type);
-
-        return EXIT_SUCCESS;
-    }
-
-    for(int i = 0; i < index; i++){ // For higher indexes the total shift must be a summation
-
-        size_t size = obj->size_vector[i];
-        size_t type = obj->type_size_vector[i];
-
-        shift += size*type;
-    }
-
-    // Actual size to be copied
-    size_t size = obj->size_vector[index];
-    size_t type = obj->type_size_vector[index];
-
-    void* cpy = (void*)(obj->data + shift); // cpy refers to data buffer pointer plus the calculated shift
-
-    memcpy(cpy, src, size * type);
-
-    return EXIT_SUCCESS;
+    return 0;
 }
 
-void* obj_GetFromIndex(Object* obj, size_t index){
+void* obj_Get(Object* obj, void* buffer, int index){
+    if(index < 0 || index >= obj->element_count) return NULL;
 
-    if(index >= obj->element_count) return NULL; // Returns null if index is higher than allowed in the object size array
+    size_t size = obj->table[index].size;
+    size_t type = obj->table[index].type;
+    
+    if(size == 0 || type == 0) return NULL;
 
-    int shift = 0;
+    memcpy(buffer, obj->table[index].data, size*type);
 
-    // Same process
+    return buffer;
+}
 
-    if(! index){ 
+int obj_ObjAppend(Object* obj, void* src, size_t srcsize, size_t srctype){ // this function is in WIP!!
+    size_t shift = 0;
+    int newSize = srcsize * srctype;
 
-        return obj->data;
+    int newIndex = obj->element_count;
+
+    ++obj->element_count;                   // new element count
+    obj->byte_count += newSize;             // new byte count
+
+    obj->table = realloc(obj->table, obj->element_count * sizeof(Element));
+
+    void* dataux = realloc(obj->table[0].data, obj->byte_count);
+
+    obj->table[newIndex].size = srcsize;
+    obj->table[newIndex].type = srctype;
+
+    for(int i = 0; i < newIndex; i++){
+        shift += obj->table[i].size * obj->table[i].type; 
     }
+    obj->table[0].data = dataux;
+    obj->table[newIndex].data = (void*)(dataux + shift);
 
-    for(int i = 0; i < index; i++){
-        size_t size = obj->size_vector[i];
-        size_t type = obj->type_size_vector[i];
+    memcpy(obj->table[newIndex].data, src, newSize);
 
-        shift += size * type;
+    return 0;
+}
+
+int obj_ElementAppend(Object* obj, void* src, size_t srcsize, int index){ // worse than object append lol
+
+    if(index < 0 || index >= obj->element_count) return -1;
+
+    int oldElementSize = obj->table[index].size * obj->table[index].type;
+    obj->table[index].size += srcsize;
+
+    int newSize = obj->byte_count + srcsize * obj->table[index].type;
+
+    void* newData = realloc(obj->table[index].data, newSize);
+
+    obj->table[index].data = newData;
+
+    memcpy(obj->table[index].data + oldElementSize, src, srcsize * obj->table[index].type);
+
+    return 1000;
+}
+
+void obj_SetID(Object* obj, char* id){
+    memcpy(obj->id, id, 32 * sizeof(unsigned char));
+}
+
+char* obj_GetID(Object* obj, char* idbuffer){
+    memcpy(idbuffer, obj->id, 32 * sizeof(unsigned char));
+    return idbuffer;
+}
+
+bool obj_IdCompare(Object* obj1, Object* obj2){
+    for(int i = 0; i < 32; i++){
+        if(obj1->id[i] != obj2->id[i]) return false;
     }
-
-    void* aux = (void*)(obj->data + shift); // aux refers to data buffer plus the calculated shift
-
-    return aux; // returns the reference with shift in memory
-
+    return true;
 }

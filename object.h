@@ -15,43 +15,75 @@
 #define LONGLONG_S  sizeof(long long)
 
 /**
+ * Element struct.
+*/
+typedef struct ElementType{
+    size_t size;
+    size_t type;
+    void* data;
+}Element;
+/**
  * Object struct.
 */
 typedef struct ObjectType{
-    size_t* size_vector;
-    size_t* type_size_vector;
-    size_t element_count; 
+    unsigned char id[32];
+    Element* table;
+    size_t element_count;
     size_t byte_count;
-    bool is_dynamic;
-    void* data;
 
 }Object;
+/**
+ * Makes an id with object size in bytes, element count and it's own
+ * address on memory
+*/
+void obj_IdMake(Object* obj);
+/**
+ * Allocates de object, map the members using indexes from typearr and
+ * sizearr
+*/
+Object* obj_Alloc(size_t* sizearr, size_t* typearr, int element_count);
 
 /**
- * This function creates a map for the elements in the object,
- * it takes an already allocated object pointer, an array of element sizes
- * an array of the sizes of each element and the number of elements.
+ * Access an element from the object using an index
 */
-int obj_MapMembers(Object* obj, size_t* sizes, size_t* type_sizes, size_t element_count);
+void* obj_Access(Object* obj, int index);
 
 /**
- * This function has a map integrated and allocates the object automatically.
+ * Set an element in the object using an index
 */
-Object* obj_Alloc(size_t* sizes, size_t* type_sizes, size_t element_count);
+int obj_Set(Object* obj, void* src, int index);
 
 /**
- * Destroy an object if allocated by obj_Alloc.
+ * Get an element in the object using an index
+ * this function uses a buffer to return the
+ * element
 */
-int obj_Free(Object* obj);
+void* obj_Get(Object* obj, void* buffer, int index);
 
 /**
- * Set an element in src at index in data buffer. 
+ * [WIP] Adds a new element in object
 */
-int obj_SetAtIndex(Object* obj, void* src, size_t index);
+int obj_ObjAppend(Object* obj, void* src, size_t srcsize, size_t srctype);
 
 /**
- * Get an element at index from the object.
+ * [WIP] Adds array in src to a element in object
 */
-void* obj_GetFromIndex(Object* obj, size_t index);
+int obj_ElementAppend(Object* obj, void* src, size_t srcsize, int index);
+
+/**
+ * Sets a user defined ID
+*/
+void obj_SetID(Object* obj, char* id);
+
+/**
+ * Gets object ID
+*/
+char* obj_GetID(Object* obj, char* idbuffer);
+
+/**
+ * Compares the ID of two objects, return true
+ * if equal, false otherwise
+*/
+bool obj_IdCompare(Object* obj1, Object* obj2);
 
 #endif
