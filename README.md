@@ -5,16 +5,16 @@
 
 Goals:
 
- [X] Core - reconstructed.
+- [x] Core - reconstructed.
  
- [X] QOL macros
+- [x] QOL macros
  
- [ ] Demos
+- [ ] Demos
  
- [ ] File I/O
+- [ ] File I/O
  
- [ ] Object lists
+- [ ] Object lists
  
- [ ] Object trees
+- [ ] Object trees
  
- [ ] Suggestions
+- [ ] Suggestions
