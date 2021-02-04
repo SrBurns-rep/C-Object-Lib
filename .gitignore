@@ -1,2 +1,2 @@
-
-test4.exe
+# Ignores my compilled tests
+*.exe

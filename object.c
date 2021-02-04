@@ -79,34 +79,40 @@ void* obj_Get(Object* obj, void* buffer, int index){
     return buffer;
 }
 
-int obj_ObjAppend(Object* obj, void* src, size_t srcsize, size_t srctype){ // this function is in WIP!!
-    size_t shift = 0;
-    int newSize = srcsize * srctype;
+int obj_ObjAppend(Object* obj, void* src, size_t srcsize, size_t srctype){
+    size_t shift = 0;                               // shift in data pointer
+    size_t numOfelements = obj->element_count + 1;  // new number of elements
+    size_t byteAcc = srcsize * srctype;             // increase in byte count
+    size_t numOfBytes = obj->byte_count + byteAcc;  // new byte count
 
-    int newIndex = obj->element_count;
+    Element* tableaux = realloc(obj->table, numOfelements * sizeof(Element)); // new array of elements
+    void* dataux = realloc(obj->table[0].data, numOfBytes);                   // new data array
 
-    ++obj->element_count;                   // new element count
-    obj->byte_count += newSize;             // new byte count
+    obj->table = tableaux;
 
-    obj->table = realloc(obj->table, obj->element_count * sizeof(Element));
+    for(int i = 0; i < numOfelements; i++){     //calc shift and apply pointers
+        if(i == 0){
+            obj->table[0].data = dataux;
 
-    void* dataux = realloc(obj->table[0].data, obj->byte_count);
+        }else{
+            shift += tableaux[i - 1].size * tableaux[i - 1].type;
 
-    obj->table[newIndex].size = srcsize;
-    obj->table[newIndex].type = srctype;
-
-    for(int i = 0; i < newIndex; i++){
-        shift += obj->table[i].size * obj->table[i].type; 
+            tableaux[i].data = (void*)(dataux + shift);
+        }
     }
-    obj->table[0].data = dataux;
-    obj->table[newIndex].data = (void*)(dataux + shift);
 
-    memcpy(obj->table[newIndex].data, src, newSize);
+    memcpy(tableaux[numOfelements - 1].data, src, byteAcc); // copy the source
+    
+    obj->table[numOfelements - 1].size = srcsize;
+    obj->table[numOfelements - 1].type = srctype;
+
+    obj->byte_count = numOfBytes;
+    obj->element_count = numOfelements;
 
     return 0;
 }
 
-int obj_ElementAppend(Object* obj, void* src, size_t srcsize, int index){ // worse than object append lol
+int obj_ElementAppend(Object* obj, void* src, size_t srcsize, int index){ // WIP, doesn't work
 
     if(index < 0 || index >= obj->element_count) return -1;
 

@@ -38,5 +38,12 @@ int main(int argc, char const *argv[])
 
     printf("Int: %i\n", buffer[2]);
 
+    int nums3[] = {500, -45, 200};
+
+    obj_ObjAppend(testobj, nums3, 3, INT_S);
+
+    printf("Int: %i\n", *(int*)(testobj->table[2].data + 2*sizeof(int)));
+    printf("String: %s\n", (char*)testobj->table[0].data);
+
     return 0;
 }
