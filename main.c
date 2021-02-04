@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
     char* id = testobj->id;
 
     printf("ID:");
-    for(int i = -1; i < 32; i += sizeof(void*)){
+    for(int i = 0; i < 3*sizeof(size_t); i += sizeof(size_t)){
         printf(" %X", *(size_t*)(id + i));
     }
     printf("\n");
@@ -41,6 +41,12 @@ int main(int argc, char const *argv[])
     int nums3[] = {500, -45, 200};
 
     obj_ObjAppend(testobj, nums3, 3, INT_S);
+
+    printf("Object has a new ID:");
+    for(int i = 0; i < 3*sizeof(size_t); i += sizeof(size_t)){
+        printf(" %X", *(size_t*)(id + i));
+    }
+    printf("\n");
 
     printf("Int: %i\n", *(int*)(testobj->table[2].data + 2*sizeof(int)));
     printf("String: %s\n", (char*)testobj->table[0].data);

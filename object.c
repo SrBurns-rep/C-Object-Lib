@@ -109,6 +109,9 @@ int obj_ObjAppend(Object* obj, void* src, size_t srcsize, size_t srctype){
     obj->byte_count = numOfBytes;
     obj->element_count = numOfelements;
 
+    // The object changed, it needs a new ID 
+    obj_IdMake(obj);
+
     return 0;
 }
 
