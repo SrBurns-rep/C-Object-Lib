@@ -3,6 +3,7 @@
 
 int main(int argc, char const *argv[])
 {
+
     size_t size[] = {45, 3};
     size_t type[] = {CHAR_S, INT_S};
 
@@ -38,7 +39,7 @@ int main(int argc, char const *argv[])
 
     printf("Int: %i\n", buffer[2]);
 
-    int nums3[] = {500, -45, 200};
+    int nums3[3] = {500, -45, 200};
 
     obj_ObjAppend(testobj, nums3, 3, INT_S);
 

@@ -101,7 +101,9 @@ int obj_ObjAppend(Object* obj, void* src, size_t srcsize, size_t srctype){
         }
     }
 
-    memcpy(tableaux[numOfelements - 1].data, src, byteAcc); // copy the source
+    void* elaux = (void*) tableaux[numOfelements - 1].data;
+
+    memcpy(elaux, src, byteAcc); // copy the source
     
     obj->table[numOfelements - 1].size = srcsize;
     obj->table[numOfelements - 1].type = srctype;
@@ -116,7 +118,7 @@ int obj_ObjAppend(Object* obj, void* src, size_t srcsize, size_t srctype){
 }
 
 int obj_ElementAppend(Object* obj, void* src, size_t srcsize, int index){ // WIP, doesn't work
-
+    /*
     if(index < 0 || index >= obj->element_count) return -1;
 
     int oldElementSize = obj->table[index].size * obj->table[index].type;
@@ -129,7 +131,7 @@ int obj_ElementAppend(Object* obj, void* src, size_t srcsize, int index){ // WIP
     obj->table[index].data = newData;
 
     memcpy(obj->table[index].data + oldElementSize, src, srcsize * obj->table[index].type);
-
+    */
     return 1000;
 }
 
