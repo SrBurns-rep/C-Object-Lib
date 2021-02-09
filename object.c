@@ -46,6 +46,12 @@ Object* obj_Alloc(size_t* sizearr, size_t* typearr, int element_count){
     return obj;
 }
 
+void obj_Free(Object* obj){
+    free(obj->table[0].data); // free void*
+    free(obj->table);         // free Element*
+    free(obj);                // free Object*
+}
+
 void* obj_Access(Object* obj, int index){
     
     if(index < 0 || index >= obj->element_count) return NULL;

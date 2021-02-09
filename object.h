@@ -46,6 +46,11 @@ void obj_IdMake(Object* obj);
 Object* obj_Alloc(size_t* sizearr, size_t* typearr, int element_count);
 
 /**
+ * Deallocates the object
+*/
+void obj_Free(Object* obj);
+
+/**
  * Access an element from the object using an index
 */
 void* obj_Access(Object* obj, int index);

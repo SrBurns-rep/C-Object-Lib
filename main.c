@@ -52,5 +52,11 @@ int main(int argc, char const *argv[])
     printf("Int: %i\n", *(int*)(testobj->table[2].data + 2*sizeof(int)));
     printf("String: %s\n", (char*)testobj->table[0].data);
 
+    printf("Deallocating object...\n");
+
+    obj_Free(testobj);
+
+    printf("Object successfully deallocated.\n");
+
     return 0;
 }
