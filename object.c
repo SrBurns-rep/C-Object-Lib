@@ -18,7 +18,11 @@ Object* obj_Alloc(size_t* sizearr, size_t* typearr, int element_count){
 
     Element* tableaux = malloc(element_count * sizeof(Element));
 
-    for(int i = 0; i < element_count; i++){
+    if(tableaux == NULL){ // failed malloc case
+        return NULL;
+    }
+
+    for(int i = 0; i < element_count; i++){ // calc total size
         tableaux[i].size = sizearr[i];
         tableaux[i].type = typearr[i];
         byteSize += sizearr[i] * typearr[i];
@@ -26,6 +30,10 @@ Object* obj_Alloc(size_t* sizearr, size_t* typearr, int element_count){
 
     Object* obj = malloc(sizeof(Object));
     void* dataux = calloc(byteSize, 1);
+
+    if(obj == NULL || dataux == NULL){ // failed malloc case
+        return NULL;
+    }
 
     for(int i = 0; i < element_count; i++){
         if(i == 0){
@@ -36,7 +44,6 @@ Object* obj_Alloc(size_t* sizearr, size_t* typearr, int element_count){
             tableaux[i].data = (void*)(dataux + shift);
         }
     }
-
     obj->table = tableaux;
     obj->byte_count = byteSize;
     obj->element_count = element_count;
@@ -94,6 +101,10 @@ int obj_ObjAppend(Object* obj, void* src, size_t srcsize, size_t srctype){
     Element* tableaux = realloc(obj->table, numOfelements * sizeof(Element)); // new array of elements
     void* dataux = realloc(obj->table[0].data, numOfBytes);                   // new data array
 
+    if(tableaux == NULL || dataux == NULL){     //realloc failed
+        return -1;
+    }
+
     obj->table = tableaux;
 
     for(int i = 0; i < numOfelements; i++){     //calc shift and apply pointers
@@ -107,9 +118,9 @@ int obj_ObjAppend(Object* obj, void* src, size_t srcsize, size_t srctype){
         }
     }
 
-    void* elaux = (void*) tableaux[numOfelements - 1].data;
+    //void* elaux = (void*) tableaux[numOfelements - 1].data;
 
-    memcpy(elaux, src, byteAcc); // copy the source
+    memcpy(tableaux[numOfelements - 1].data, src, byteAcc); // copy the source
     
     obj->table[numOfelements - 1].size = srcsize;
     obj->table[numOfelements - 1].type = srctype;

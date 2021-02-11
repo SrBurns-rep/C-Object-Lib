@@ -1,7 +1,12 @@
 #include <stdio.h>
 #include "object.h"
 
-int main(int argc, char const *argv[])
+/**
+ * This is a test of new implemented functions,
+ * it's not meant to demonstrate object usage.
+*/
+
+int notmain()
 {
 
     size_t size[] = {45, 3};
@@ -39,9 +44,14 @@ int main(int argc, char const *argv[])
 
     printf("Int: %i\n", buffer[2]);
 
+    printf("Appending object...\n");
+
     int nums3[3] = {500, -45, 200};
 
-    obj_ObjAppend(testobj, nums3, 3, INT_S);
+    if(obj_ObjAppend(testobj, nums3, 3, INT_S) + 1 == 0){
+        printf("Error in append!\n");
+        return -1;
+    }
 
     printf("Object has a new ID:");
     for(int i = 0; i < 3*sizeof(size_t); i += sizeof(size_t)){

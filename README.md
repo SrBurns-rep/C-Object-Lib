@@ -1,7 +1,7 @@
 # Object Library
  C Object library to handle any data.
 
- Core functionalities, version: 2.0.0-dev
+ Core functionalities, version: 2.5.0-dev
 
 Goals:
 
@@ -9,7 +9,7 @@ Goals:
  
 - [x] QOL macros
  
-- [ ] Demos
+- [x] Demos
  
 - [ ] File I/O
  
