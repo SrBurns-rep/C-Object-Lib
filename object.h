@@ -22,6 +22,7 @@ typedef struct ElementType{
     size_t type;
     void* data;
 }Element;
+
 /**
  * Object struct.
 */
@@ -32,6 +33,7 @@ typedef struct ObjectType{
     size_t byte_count;
 
 }Object;
+
 /**
  * Makes an id with object size in bytes, element count and it's own
  * address on memory, object size in bytes and the element count
@@ -39,8 +41,9 @@ typedef struct ObjectType{
  * address on memory can be used as an individual identifier.
 */
 void obj_IdMake(Object* obj);
+
 /**
- * Allocates de object, map the members using indexes from typearr and
+ * Allocates the object, map the members using indexes from typearr and
  * sizearr
 */
 Object* obj_Alloc(size_t* sizearr, size_t* typearr, int element_count);
@@ -68,7 +71,7 @@ int obj_Set(Object* obj, void* src, int index);
 void* obj_Get(Object* obj, void* buffer, int index);
 
 /**
- * [WIP] Adds a new element in object
+ * Adds a new element in object
 */
 int obj_ObjAppend(Object* obj, void* src, size_t srcsize, size_t srctype);
 
